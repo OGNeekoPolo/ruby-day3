@@ -5,23 +5,37 @@ class Wordfreq
     'were', 'will', 'with']
 
   def initialize(filename)
-    words = []
-    @words = words
-    contents = File.read(filename).downcase
-      @words << line.downcase.split
+    @contents = File.read(filename).downcase
+    @contents.gsub!(/[^a-z0-9]/, ' ')
+    STOP_WORDS.each do |word|
+      @contents.gsub!(/\b(?:#{word})\b/, ' ')
     end
+    @contents
   end
 
   def frequency(word)
+    #look up .scan and .count
+    counter = @contents.scan(/\b(?:#{word})\b/).count
   end
 
   def frequencies
+    hash = Hash.new
+    array = @contents.split(" ")
+    array.each do |word|
+      hash[word] = frequency(word)
+    end
+    hash
   end
 
   def top_words(number)
+    top = frequencies.sort_by{|word, count| count}.reverse
+    top.take(number)
   end
 
   def print_report
+    top_words(10).each do |key, value|
+      puts "#{key} | #{value} " + "*"* value
+    end
   end
 end
 
